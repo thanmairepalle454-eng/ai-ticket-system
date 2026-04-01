@@ -13,8 +13,8 @@ services:
       - key: SMTP_USER
         value: thanmairepalle454@gmail.com
       - key: SMTP_PASSWORD
-        sync: false
+        value: qmjycppylrsevvoz
       - key: ADMIN_EMAIL
         value: ganeshakhila6@gmail.com
       - key: APP_URL
-        sync: false
+        value: https://ai-ticket-system.onrender.com
