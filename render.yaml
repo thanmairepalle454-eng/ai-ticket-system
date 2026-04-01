@@ -4,7 +4,7 @@ services:
     runtime: python
     rootDir: backend
     buildCommand: pip install -r requirements.txt && python create_sample_pdfs.py
-    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --timeout 120
     envVars:
       - key: SMTP_HOST
         value: smtp.gmail.com
@@ -13,6 +13,8 @@ services:
       - key: SMTP_USER
         value: thanmairepalle454@gmail.com
       - key: SMTP_PASSWORD
-        sync: false        # you will paste this in Render dashboard (keeps it secret)
+        sync: false
       - key: ADMIN_EMAIL
         value: ganeshakhila6@gmail.com
+      - key: APP_URL
+        sync: false

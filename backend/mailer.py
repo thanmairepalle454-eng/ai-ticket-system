@@ -2,10 +2,14 @@
 Email service using Python's built-in smtplib.
 No extra packages needed.
 """
+import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import config
+
+# On Render this will be set automatically; locally falls back to localhost
+APP_URL = os.environ.get("APP_URL", "http://localhost:5000")
 
 
 def _send(to_email, subject, html_body):
@@ -120,7 +124,7 @@ def notify_admin_new_ticket(ticket):
           <pre style="color:#1a2e1a;font-family:Segoe UI,sans-serif;white-space:pre-wrap;margin:0;line-height:1.7;font-size:14px">{ticket['solution']}</pre>
         </div>
 
-        <a href="http://localhost:5000/admin"
+        <a href="{APP_URL}/admin"
            style="display:inline-block;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:13px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">
           Open Admin Dashboard to Resolve →
         </a>
