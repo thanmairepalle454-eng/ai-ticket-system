@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 858 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+14 TL
+(Computer Running Slow) Tj T*
+() Tj T*
+(Keywords: computer slow laptop slow system slow performance lag freezing) Tj T*
+() Tj T*
+(Steps to fix a slow computer:) Tj T*
+(1. Restart your computer to clear memory and temp files.) Tj T*
+(2. Close unused programs and browser tabs.) Tj T*
+(3. Check Task Manager \(Ctrl+Shift+Esc\) for high CPU or memory usage.) Tj T*
+(4. Run Disk Cleanup: search Disk Cleanup in Start menu.) Tj T*
+(5. Disable startup programs: Task Manager > Startup tab.) Tj T*
+(6. Check for Windows updates and install pending ones.) Tj T*
+(7. Run a full antivirus scan to check for malware.) Tj T*
+() Tj T*
+(If still slow:) Tj T*
+(- Check if hard disk is nearly full \(keep 15% free space\).) Tj T*
+(- Consider upgrading RAM if consistently above 90% usage.) Tj T*
+(- Contact IT for hardware assessment.) Tj T*
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1220
+%%EOF

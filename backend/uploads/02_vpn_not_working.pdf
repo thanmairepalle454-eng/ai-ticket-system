@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 912 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+14 TL
+(VPN Connection Issue) Tj T*
+() Tj T*
+(Keywords: VPN not connecting vpn error vpn failed remote access network) Tj T*
+() Tj T*
+(Steps to fix VPN not connecting:) Tj T*
+(1. Check your internet connection is working first.) Tj T*
+(2. Close and fully restart the VPN client application.) Tj T*
+(3. Make sure you are entering the correct VPN username and password.) Tj T*
+(4. Try connecting to a different VPN server location.) Tj T*
+(5. Temporarily disable your firewall or antivirus and retry.) Tj T*
+(6. Uninstall and reinstall the VPN client if issue persists.) Tj T*
+() Tj T*
+(Common Errors:) Tj T*
+(- Authentication failed: Reset your VPN password via IT portal.) Tj T*
+(- Timeout error: Try a different server or check firewall rules.) Tj T*
+(- Error 800 or 619: Check network adapter settings.) Tj T*
+(- Still not working: Contact IT team with the exact error message.) Tj T*
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1274
+%%EOF

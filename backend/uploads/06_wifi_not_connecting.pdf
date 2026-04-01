@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 886 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+14 TL
+(WiFi Not Connecting) Tj T*
+() Tj T*
+(Keywords: wifi not connecting no internet wireless network issue cannot connect) Tj T*
+() Tj T*
+(Steps to fix WiFi issues:) Tj T*
+(1. Turn WiFi off and on again on your device.) Tj T*
+(2. Forget the network and reconnect: Settings > WiFi > Forget > Reconnect.) Tj T*
+(3. Restart your computer.) Tj T*
+(4. Restart the router or access point \(unplug 30 seconds\).) Tj T*
+(5. Run Windows Network Troubleshooter: Settings > Network > Troubleshoot.) Tj T*
+(6. Update network adapter driver via Device Manager.) Tj T*
+(7. Reset network settings: open CMD as admin, run: netsh winsock reset) Tj T*
+() Tj T*
+(Common Issues:) Tj T*
+(- Wrong password: Verify WiFi password with IT.) Tj T*
+(- IP conflict: Run ipconfig /release then ipconfig /renew in CMD.) Tj T*
+(- Limited connectivity: Check DHCP server is running.) Tj T*
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1248
+%%EOF

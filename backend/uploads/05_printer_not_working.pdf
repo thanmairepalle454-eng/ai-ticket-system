@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 893 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+14 TL
+(Printer Not Working) Tj T*
+() Tj T*
+(Keywords: printer not printing printer offline printer error cannot print) Tj T*
+() Tj T*
+(Steps to fix printer issues:) Tj T*
+(1. Check printer is powered on and connected \(USB or network\).) Tj T*
+(2. Check for paper jams and clear them carefully.) Tj T*
+(3. Ensure paper is loaded correctly in the tray.) Tj T*
+(4. On your PC: Settings > Printers > right-click printer > Set as Default.) Tj T*
+(5. Clear the print queue: Settings > Printers > Open Queue > Cancel All.) Tj T*
+(6. Restart the Print Spooler: Services > Print Spooler > Restart.) Tj T*
+(7. Reinstall printer driver from manufacturer website.) Tj T*
+() Tj T*
+(Network Printer Issues:) Tj T*
+(- Ping the printer IP to check connectivity.) Tj T*
+(- Re-add the printer using its IP address.) Tj T*
+(- Contact IT if printer shows offline on the network.) Tj T*
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1255
+%%EOF

@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 959 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+14 TL
+(Software Installation Issue) Tj T*
+() Tj T*
+(Keywords: software install error cannot install application setup failed) Tj T*
+() Tj T*
+(Steps to fix software installation issues:) Tj T*
+(1. Run the installer as Administrator: right-click > Run as administrator.) Tj T*
+(2. Temporarily disable antivirus during installation.) Tj T*
+(3. Check you have enough disk space \(at least 2GB free\).) Tj T*
+(4. Download a fresh copy of the installer \(file may be corrupted\).) Tj T*
+(5. Check Windows is up to date before installing.) Tj T*
+(6. Install required prerequisites like .NET Framework or Visual C++.) Tj T*
+() Tj T*
+(Common Errors:) Tj T*
+(- Error 1603: Run installer as admin and check disk space.) Tj T*
+(- Missing DLL: Install Visual C++ Redistributable from Microsoft.) Tj T*
+(- Access denied: Check folder permissions or contact IT.) Tj T*
+(- Incompatible version: Verify software supports your Windows version.) Tj T*
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1321
+%%EOF

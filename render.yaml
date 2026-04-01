@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ai-ticket-system
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python create_sample_pdfs.py
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        value: thanmairepalle454@gmail.com
+      - key: SMTP_PASSWORD
+        sync: false        # you will paste this in Render dashboard (keeps it secret)
+      - key: ADMIN_EMAIL
+        value: ganeshakhila6@gmail.com

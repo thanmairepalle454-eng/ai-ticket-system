@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard — AI Ticket System</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f1f5f9; color: #333; }
+
+    /* ── Navbar ── */
+    .navbar {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 0 32px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 100;
+    }
+    .navbar .brand { color: #fff; font-size: 1rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .navbar a {
+      color: rgba(255,255,255,0.8); text-decoration: none; font-size: 13px;
+      padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.2s;
+    }
+    .navbar a:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    /* ── Page tabs ── */
+    .page-tabs {
+      display: flex; gap: 0; background: #fff;
+      border-bottom: 2px solid #e8eaf6; padding: 0 32px;
+    }
+    .page-tab {
+      padding: 14px 20px; border: none; background: transparent; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: #9e9e9e;
+      border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s;
+    }
+    .page-tab:hover { color: #5c6bc0; }
+    .page-tab.active { color: #5c6bc0; border-bottom-color: #5c6bc0; }
+
+    /* ── Content ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── Stats ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; padding: 24px 32px 0; max-width: 1100px; margin: 0 auto;
+    }
+    .stat-card {
+      background: #fff; border-radius: 12px; padding: 18px 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .stat-icon { font-size: 1.8rem; }
+    .stat-label { font-size: 11px; color: #888; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: #333; line-height: 1; margin-top: 2px; }
+
+    /* ── Main ── */
+    .main { max-width: 1100px; margin: 20px auto; padding: 0 32px 40px; }
+
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .section-header h2 { font-size: 1rem; font-weight: 700; color: #333; }
+
+    .filter-tabs { display: flex; gap: 8px; }
+    .filter-btn {
+      padding: 6px 16px; border: 2px solid #e2e8f0; border-radius: 20px;
+      background: #fff; cursor: pointer; font-size: 13px; font-weight: 600;
+      color: #888; transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: #5c6bc0; color: #5c6bc0; }
+    .filter-btn.active { background: #5c6bc0; border-color: #5c6bc0; color: #fff; }
+
+    /* ── Ticket items ── */
+    #ticket-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .ticket-item {
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      border: 2px solid transparent; overflow: hidden; transition: border-color 0.2s;
+    }
+    .ticket-item:hover { border-color: #c7d2fe; }
+    .ticket-item.resolved { opacity: 0.72; }
+
+    .ticket-head {
+      padding: 14px 20px; display: flex; align-items: center;
+      justify-content: space-between; cursor: pointer;
+      border-bottom: 1px solid #f1f5f9; user-select: none;
+    }
+    .ticket-head:hover { background: #fafbff; }
+    .t-id   { font-weight: 700; font-size: 14px; color: #5c6bc0; }
+    .t-name { font-size: 14px; color: #333; margin-left: 10px; }
+    .t-email{ font-size: 12px; color: #888; }
+    .t-date { font-size: 12px; color: #aaa; }
+
+    .badge-open     { background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .badge-resolved { background: #dcfce7; color: #166534; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .chevron { font-size: 11px; color: #aaa; transition: transform 0.2s; margin-left: 8px; }
+    .chevron.open { transform: rotate(180deg); }
+
+    .ticket-body { display: none; padding: 20px; background: #fafbff; }
+    .ticket-body.open { display: block; }
+
+    .slabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 6px; }
+    .issue-box    { background: #fff8f0; border-left: 3px solid #f59e0b; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 16px; }
+    .solution-box { background: #f0fdf4; border-left: 3px solid #22c55e; padding: 10px 14px; border-radius: 0 8px 8px 0; font-size: 14px; color: #1a2e1a; line-height: 1.7; white-space: pre-wrap; font-family: inherit; margin-bottom: 16px; }
+
+    .resolve-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff; border: none; border-radius: 8px; font-size: 14px;
+      font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    }
+    .resolve-btn:hover:not(:disabled) { opacity: 0.88; }
+    .resolve-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .resolved-info { font-size: 13px; color: #166534; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+    .empty { text-align: center; padding: 60px 20px; color: #aaa; }
+    .empty .ei { font-size: 3rem; margin-bottom: 12px; }
+
+    /* ── Knowledge Base page ── */
+    .kb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .upload-card {
+      background: #fff; border-radius: 14px; padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .upload-card h3 { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 6px; }
+    .upload-card p  { font-size: 13px; color: #888; margin-bottom: 18px; line-height: 1.5; }
+
+    .upload-area {
+      border: 2px dashed #c7d2fe; border-radius: 12px; padding: 28px 16px;
+      text-align: center; cursor: pointer; transition: all 0.2s; background: #fafbff; display: block;
+    }
+    .upload-area:hover, .upload-area.has-file { border-color: #5c6bc0; background: #f0f2ff; }
+    .upload-area .uicon { font-size: 2rem; margin-bottom: 8px; }
+    .upload-area .ulabel { color: #5c6bc0; font-weight: 600; font-size: 14px; }
+    .upload-area .uhint  { color: #9e9e9e; font-size: 12px; margin-top: 4px; }
+    input[type="file"] { display: none; }
+
+    .btn-upload {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; margin-top: 14px; padding: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-upload:hover:not(:disabled) { opacity: 0.9; }
+    .btn-upload:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .alert { display: none; margin-top: 12px; padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; }
+    .alert.error   { background: #fff5f5; border: 2px solid #fc8181; color: #c53030; }
+    .alert.success { background: #f0fdf4; border: 2px solid #86efac; color: #166534; }
+
+    /* PDF list */
+    .pdf-card {
+      background: #fff; border-radius: 14px; padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .pdf-card h3 { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 16px; }
+    #pdf-list { display: flex; flex-direction: column; gap: 8px; }
+    .pdf-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; background: #f8f9ff; border-radius: 8px;
+      border: 1px solid #e8eaf6; font-size: 13px; color: #333;
+    }
+    .pdf-item .pdf-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .pdf-item .pdf-name { flex: 1; font-weight: 500; }
+    .pdf-item .pdf-badge {
+      background: #dcfce7; color: #166534; font-size: 11px;
+      font-weight: 700; padding: 2px 8px; border-radius: 20px;
+    }
+    .pdf-empty { text-align: center; padding: 30px; color: #aaa; font-size: 14px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #1e293b; color: #fff; padding: 12px 20px;
+      border-radius: 10px; font-size: 14px; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      transform: translateY(80px); opacity: 0; transition: all 0.3s; z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    .spinner {
+      width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: 1fr; }
+      .main, .stats { padding-left: 16px; padding-right: 16px; }
+      .navbar, .page-tabs { padding-left: 16px; padding-right: 16px; }
+      .kb-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="brand">🔧 Admin Dashboard — AI Ticket System</div>
+  <a href="/">👤 Employee Portal</a>
+</nav>
+
+<!-- Page tabs -->
+<div class="page-tabs">
+  <button class="page-tab active" onclick="switchPage('tickets', this)">🎫 &nbsp;Tickets</button>
+  <button class="page-tab" onclick="switchPage('knowledge', this)">📚 &nbsp;Knowledge Base</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 1: TICKETS
+══════════════════════════════════════════════════════════ -->
+<div id="page-tickets" class="page active">
+  <div class="stats">
+    <div class="stat-card">
+      <div class="stat-icon">🎫</div>
+      <div><div class="stat-label">Total Tickets</div><div class="stat-value" id="stat-total">—</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🟡</div>
+      <div><div class="stat-label">Open</div><div class="stat-value" id="stat-open">—</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div><div class="stat-label">Resolved</div><div class="stat-value" id="stat-resolved">—</div></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="section-header">
+      <h2>All Tickets</h2>
+      <div class="filter-tabs">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('open',this)">Open</button>
+        <button class="filter-btn" onclick="setFilter('resolved',this)">Resolved</button>
+      </div>
+    </div>
+    <div id="ticket-list"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     PAGE 2: KNOWLEDGE BASE
+══════════════════════════════════════════════════════════ -->
+<div id="page-knowledge" class="page">
+  <div class="main" style="padding-top:24px">
+    <div class="kb-grid">
+
+      <!-- Upload card -->
+      <div class="upload-card">
+        <h3>📤 Upload Knowledge PDF</h3>
+        <p>Upload IT solution PDFs. The AI will automatically read and index them to answer employee tickets.</p>
+        <label class="upload-area" for="pdf-input" id="upload-area">
+          <div class="uicon">📁</div>
+          <div class="ulabel" id="upload-label">Click to select a PDF file</div>
+          <div class="uhint">Only .pdf files are supported</div>
+        </label>
+        <input type="file" id="pdf-input" accept=".pdf" onchange="onFileSelected(this)"/>
+        <button class="btn-upload" id="upload-btn" onclick="uploadPDF()" disabled>
+          ⬆️ &nbsp;Upload &amp; Index PDF
+        </button>
+        <div class="alert error"   id="upload-error"></div>
+        <div class="alert success" id="upload-success"></div>
+      </div>
+
+      <!-- PDF list card -->
+      <div class="pdf-card">
+        <h3>📚 Indexed Knowledge Files</h3>
+        <div id="pdf-list"><div class="pdf-empty">Loading...</div></div>
+      </div>
+
+    </div>
+
+    <!-- Topics covered info box -->
+    <div style="margin-top:20px;background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.06)">
+      <h3 style="font-size:15px;font-weight:700;color:#333;margin-bottom:12px">💡 What Issues Can the AI Solve?</h3>
+      <p style="font-size:13px;color:#666;margin-bottom:14px;line-height:1.6">
+        The AI searches the indexed PDFs to find the best solution for each ticket. Currently pre-loaded topics:
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">🔑 Password Reset</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">🌐 VPN Not Connecting</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">📧 Outlook Email Sync</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">🐢 Computer Running Slow</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">🖨️ Printer Not Working</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">📶 WiFi Not Connecting</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">💿 Software Installation</div>
+        <div style="background:#f0f2ff;border-radius:8px;padding:10px 14px;font-size:13px;color:#5c6bc0;font-weight:600">🔒 Account Locked</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let allTickets = [];
+  let currentFilter = 'all';
+
+  // ── Page switching ──────────────────────────────────────────────────────────
+  function switchPage(name, btn) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    btn.classList.add('active');
+    if (name === 'knowledge') loadPDFs();
+  }
+
+  // ── Tickets ─────────────────────────────────────────────────────────────────
+  async function loadTickets() {
+    try {
+      const res = await fetch('/api/admin/tickets');
+      allTickets = await res.json();
+      renderStats(); renderList();
+    } catch {
+      document.getElementById('ticket-list').innerHTML =
+        '<div class="empty"><div class="ei">⚠️</div><p>Cannot connect to backend. Make sure <b>python app.py</b> is running.</p></div>';
+    }
+  }
+
+  function renderStats() {
+    document.getElementById('stat-total').textContent    = allTickets.length;
+    document.getElementById('stat-open').textContent     = allTickets.filter(t => t.status === 'open').length;
+    document.getElementById('stat-resolved').textContent = allTickets.filter(t => t.status === 'resolved').length;
+  }
+
+  function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+  }
+
+  function renderList() {
+    const list = document.getElementById('ticket-list');
+    const filtered = currentFilter === 'all' ? allTickets : allTickets.filter(t => t.status === currentFilter);
+    if (!filtered.length) {
+      list.innerHTML = '<div class="empty"><div class="ei">📭</div><p>No tickets found.</p></div>'; return;
+    }
+    list.innerHTML = filtered.map(t => `
+      <div class="ticket-item ${t.status}" id="item-${t.id}">
+        <div class="ticket-head" onclick="toggleBody('${t.id}')">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+            <span class="t-id">${t.id}</span>
+            <span class="t-name">${esc(t.employee_name)}</span>
+            <span class="t-email">· ${esc(t.employee_email)}</span>
+            <span class="t-date">· ${t.created_at}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            ${t.status === 'open'
+              ? '<span class="badge-open">🟡 OPEN</span>'
+              : '<span class="badge-resolved">✅ RESOLVED</span>'}
+            <span class="chevron" id="chev-${t.id}">▼</span>
+          </div>
+        </div>
+        <div class="ticket-body" id="body-${t.id}">
+          <div class="slabel">Issue Reported</div>
+          <div class="issue-box">${esc(t.issue)}</div>
+          <div class="slabel">💡 AI Suggested Solution</div>
+          <div class="solution-box">${esc(t.solution)}</div>
+          ${t.status === 'open'
+            ? `<button class="resolve-btn" id="rbtn-${t.id}" onclick="resolveTicket('${t.id}')">
+                ✅ &nbsp;Mark as Resolved &amp; Notify Employee
+               </button>`
+            : `<div class="resolved-info">✅ Resolved on ${t.resolved_at} — Employee notified by email.</div>`}
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleBody(id) {
+    const body = document.getElementById('body-' + id);
+    const chev = document.getElementById('chev-' + id);
+    const wasOpen = body.classList.contains('open');
+    document.querySelectorAll('.ticket-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.chevron').forEach(c => c.classList.remove('open'));
+    if (!wasOpen) { body.classList.add('open'); chev.classList.add('open'); }
+  }
+
+  async function resolveTicket(id) {
+    const btn = document.getElementById('rbtn-' + id);
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Resolving...';
+    try {
+      const res  = await fetch(`/api/admin/tickets/${id}/resolve`, { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      showToast(data.email_sent
+        ? `✅ ${id} resolved — employee notified by email.`
+        : `✅ ${id} resolved (email failed — check config.py).`);
+      await loadTickets();
+    } catch (e) {
+      showToast('❌ ' + e.message);
+      btn.disabled = false;
+      btn.innerHTML = '✅ &nbsp;Mark as Resolved &amp; Notify Employee';
+    }
+  }
+
+  // ── Knowledge Base ──────────────────────────────────────────────────────────
+  async function loadPDFs() {
+    try {
+      const res   = await fetch('/api/admin/pdfs');
+      const files = await res.json();
+      const el    = document.getElementById('pdf-list');
+      if (!files.length) {
+        el.innerHTML = '<div class="pdf-empty">No PDFs indexed yet.</div>'; return;
+      }
+      el.innerHTML = files.map(f => `
+        <div class="pdf-item">
+          <span class="pdf-icon">📄</span>
+          <span class="pdf-name">${esc(f)}</span>
+          <span class="pdf-badge">Indexed</span>
+        </div>`).join('');
+    } catch {
+      document.getElementById('pdf-list').innerHTML = '<div class="pdf-empty">Failed to load.</div>';
+    }
+  }
+
+  function onFileSelected(input) {
+    const label = document.getElementById('upload-label');
+    const area  = document.getElementById('upload-area');
+    const btn   = document.getElementById('upload-btn');
+    if (input.files.length > 0) {
+      label.textContent = '✅  ' + input.files[0].name;
+      area.classList.add('has-file'); btn.disabled = false;
+    } else {
+      label.textContent = 'Click to select a PDF file';
+      area.classList.remove('has-file'); btn.disabled = true;
+    }
+  }
+
+  async function uploadPDF() {
+    const input = document.getElementById('pdf-input');
+    if (!input.files.length) return;
+    const errEl = document.getElementById('upload-error');
+    const sucEl = document.getElementById('upload-success');
+    errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Uploading...';
+
+    const fd = new FormData();
+    fd.append('file', input.files[0]);
+    try {
+      const res  = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      sucEl.innerHTML = '✅ ' + data.message; sucEl.style.display = 'block';
+      input.value = '';
+      document.getElementById('upload-label').textContent = 'Click to select a PDF file';
+      document.getElementById('upload-area').classList.remove('has-file');
+      loadPDFs();
+    } catch (e) {
+      errEl.innerHTML = '❌ ' + e.message; errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '⬆️ &nbsp;Upload &amp; Index PDF';
+    }
+  }
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4500);
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Init ────────────────────────────────────────────────────────────────────
+  loadTickets();
+  setInterval(loadTickets, 30000);
+</script>
+</body>
+</html>

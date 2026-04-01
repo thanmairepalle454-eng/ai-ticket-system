@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Ticket System — Raise a Ticket</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px 16px;
+    }
+    .wrapper { width: 100%; max-width: 640px; }
+
+    .header { text-align: center; margin-bottom: 24px; color: #fff; }
+    .header h1 { font-size: 2rem; font-weight: 700; }
+    .header p  { margin-top: 8px; opacity: 0.85; font-size: 15px; }
+    .admin-link {
+      display: inline-block; margin-top: 12px; color: rgba(255,255,255,0.7);
+      font-size: 13px; text-decoration: none; border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 16px; border-radius: 20px; transition: all 0.2s;
+    }
+    .admin-link:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+    .card {
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2); overflow: hidden;
+    }
+
+    .card-header {
+      background: #f8f9ff; padding: 18px 28px;
+      border-bottom: 1px solid #e8eaf6;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .card-header .icon { font-size: 1.3rem; }
+    .card-header h2 { font-size: 1rem; font-weight: 700; color: #333; }
+    .card-header p  { font-size: 12px; color: #888; margin-top: 2px; }
+
+    .card-body { padding: 28px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .field label {
+      font-size: 12px; font-weight: 700; color: #555;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .field input, .field textarea {
+      padding: 12px 14px; border: 2px solid #e8eaf6; border-radius: 10px;
+      font-size: 14px; font-family: inherit; outline: none;
+      transition: border-color 0.2s; color: #333;
+    }
+    .field input:focus, .field textarea:focus { border-color: #5c6bc0; }
+    .field textarea { resize: vertical; line-height: 1.5; }
+
+    .btn-submit {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-submit:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .alert {
+      display: none; margin-top: 16px; padding: 14px 18px;
+      border-radius: 10px; font-size: 14px; font-weight: 500;
+    }
+    .alert.error   { background: #fff5f5; border: 2px solid #fc8181; color: #c53030; }
+    .alert.success { background: #f0fdf4; border: 2px solid #86efac; color: #166534; }
+
+    /* Result ticket card */
+    .result-card {
+      display: none; margin-top: 22px;
+      border: 2px solid #c7d2fe; border-radius: 14px; overflow: hidden;
+    }
+    .result-card-top {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .result-card-top .tid { color: #fff; font-weight: 700; font-size: 15px; }
+    .result-card-top .status-badge {
+      background: rgba(255,255,255,0.2); color: #fff;
+      font-size: 11px; font-weight: 700; padding: 3px 12px;
+      border-radius: 20px; letter-spacing: 0.5px;
+    }
+    .result-card-body { padding: 20px; background: #fafbff; }
+    .meta { font-size: 12px; color: #888; margin-bottom: 14px; }
+    .slabel {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; color: #888; margin-bottom: 6px;
+    }
+    .issue-box {
+      background: #fff8f0; border-left: 3px solid #f59e0b;
+      padding: 10px 14px; border-radius: 0 8px 8px 0;
+      font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 16px;
+    }
+    .solution-box {
+      background: #f0fdf4; border-left: 3px solid #22c55e;
+      padding: 10px 14px; border-radius: 0 8px 8px 0;
+      font-size: 14px; color: #1a2e1a; line-height: 1.7;
+      white-space: pre-wrap; font-family: inherit; margin-bottom: 14px;
+    }
+    .email-note {
+      font-size: 13px; color: #5c6bc0; font-weight: 500;
+      display: flex; align-items: center; gap: 6px;
+      background: #f0f2ff; padding: 10px 14px; border-radius: 8px;
+    }
+
+    .status-bar {
+      display: flex; align-items: center; gap: 8px; padding: 10px 20px;
+      background: #f8f9ff; border-top: 1px solid #e8eaf6;
+      font-size: 12px; color: #9e9e9e;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; flex-shrink: 0; }
+
+    .spinner {
+      width: 17px; height: 17px; border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 500px) { .row-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <h1>🎫 AI Ticket System</h1>
+    <p>Describe your IT issue and get an instant AI-powered solution</p>
+    <a href="/admin" class="admin-link">🔧 Admin Dashboard →</a>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="icon">🎫</div>
+      <div>
+        <h2>Raise a Support Ticket</h2>
+        <p>Fill in your details and describe the issue — AI will find a solution instantly</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row-2">
+        <div class="field">
+          <label for="emp-name">Your Name</label>
+          <input id="emp-name" type="text" placeholder="e.g. John Smith"/>
+        </div>
+        <div class="field">
+          <label for="emp-email">Your Email</label>
+          <input id="emp-email" type="email" placeholder="e.g. john@company.com"/>
+        </div>
+      </div>
+      <div class="field">
+        <label for="issue-input">Describe Your Issue</label>
+        <textarea id="issue-input" rows="4"
+          placeholder="e.g. My VPN is not connecting, Outlook is not syncing, I forgot my password, computer is slow..."></textarea>
+      </div>
+
+      <button class="btn-submit" id="submit-btn" onclick="submitTicket()">
+        🔍 &nbsp;Get AI Solution &amp; Submit Ticket
+      </button>
+
+      <div class="alert error" id="err-box"></div>
+
+      <!-- Result card shown after submission -->
+      <div class="result-card" id="result-card">
+        <div class="result-card-top">
+          <span class="tid" id="res-tid"></span>
+          <span class="status-badge">🟡 OPEN</span>
+        </div>
+        <div class="result-card-body">
+          <div class="meta" id="res-meta"></div>
+          <div class="slabel">Issue Reported</div>
+          <div class="issue-box" id="res-issue"></div>
+          <div class="slabel">💡 AI Suggested Solution</div>
+          <pre class="solution-box" id="res-solution"></pre>
+          <div class="email-note">
+            📧 &nbsp;A confirmation email has been sent to you and the admin has been notified.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-bar">
+      <div class="dot"></div>
+      Backend connected &nbsp;·&nbsp; http://localhost:5000
+    </div>
+  </div>
+</div>
+
+<script>
+  function setLoading(on) {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = on;
+    btn.innerHTML = on
+      ? '<div class="spinner"></div> Submitting...'
+      : '🔍 &nbsp;Get AI Solution &amp; Submit Ticket';
+  }
+
+  function showErr(msg) {
+    const el = document.getElementById('err-box');
+    el.innerHTML = msg; el.style.display = 'block';
+  }
+  function hideErr() { document.getElementById('err-box').style.display = 'none'; }
+
+  async function submitTicket() {
+    const name  = document.getElementById('emp-name').value.trim();
+    const email = document.getElementById('emp-email').value.trim();
+    const issue = document.getElementById('issue-input').value.trim();
+
+    if (!name || !email || !issue) {
+      showErr('⚠️ Please fill in your name, email and describe the issue.'); return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showErr('⚠️ Please enter a valid email address.'); return;
+    }
+
+    hideErr();
+    document.getElementById('result-card').style.display = 'none';
+    setLoading(true);
+
+    try {
+      const res  = await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, issue })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Server error');
+
+      document.getElementById('res-tid').textContent      = data.ticket_id;
+      document.getElementById('res-meta').textContent     = `Raised by ${name} (${email})  ·  ${data.created_at}`;
+      document.getElementById('res-issue').textContent    = data.issue;
+      document.getElementById('res-solution').textContent = data.solution;
+      document.getElementById('result-card').style.display = 'block';
+
+      // Clear form
+      document.getElementById('emp-name').value    = '';
+      document.getElementById('emp-email').value   = '';
+      document.getElementById('issue-input').value = '';
+    } catch (e) {
+      showErr('❌ ' + (e.message.includes('fetch')
+        ? 'Cannot connect to backend. Make sure <b>python app.py</b> is running.'
+        : e.message));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  document.getElementById('issue-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.ctrlKey) submitTicket();
+  });
+</script>
+</body>
+</html>

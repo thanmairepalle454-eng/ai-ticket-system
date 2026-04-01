@@ -1,0 +1,54 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >>
+endobj
+5 0 obj
+<< /Length 898 >>
+stream
+BT
+/F1 12 Tf
+50 750 Td
+14 TL
+(Outlook Email Sync Issue) Tj T*
+() Tj T*
+(Keywords: outlook email not syncing email not loading mail stuck email error) Tj T*
+() Tj T*
+(Steps to fix Outlook not syncing emails:) Tj T*
+(1. Restart Outlook completely \(close from taskbar too\).) Tj T*
+(2. Check your internet connection.) Tj T*
+(3. Go to File then Account Settings and verify your account.) Tj T*
+(4. Click Send and Receive All Folders \(F9 shortcut\).) Tj T*
+(5. Clear Outlook cache: close Outlook, delete the OST file, reopen.) Tj T*
+(6. Run Outlook in safe mode: press Win+R, type outlook.exe /safe) Tj T*
+() Tj T*
+(Advanced Fix:) Tj T*
+(- Remove and re-add your email account in Account Settings.) Tj T*
+(- Repair Office: Control Panel > Programs > Microsoft Office > Repair.) Tj T*
+(- Check mailbox storage quota is not full.) Tj T*
+(- Contact IT if issue persists after all above steps.) Tj T*
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000185 00000 n 
+0000000311 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1260
+%%EOF
