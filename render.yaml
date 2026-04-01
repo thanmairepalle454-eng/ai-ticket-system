@@ -16,5 +16,3 @@ services:
         value: qmjycppylrsevvoz
       - key: ADMIN_EMAIL
         value: ganeshakhila6@gmail.com
-      - key: APP_URL
-        value: https://ai-ticket-system.onrender.com
