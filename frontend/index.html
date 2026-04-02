@@ -161,7 +161,12 @@
       <div class="field">
         <label for="issue-input">Describe Your Issue</label>
         <textarea id="issue-input" rows="4"
-          placeholder="e.g. My VPN is not connecting, Outlook is not syncing, I forgot my password, computer is slow..."></textarea>
+          placeholder="e.g. My VPN is not connecting, Outlook is not syncing, I forgot my password, computer is slow..."
+          oninput="updatePriority(this.value)"></textarea>
+        <div id="priority-preview" style="display:none;margin-top:8px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;color:#888;font-weight:600">AI PREDICTED PRIORITY:</span>
+          <span id="priority-badge"></span>
+        </div>
       </div>
 
       <button class="btn-submit" id="submit-btn" onclick="submitTicket()">
@@ -201,6 +206,27 @@
 </div>
 
 <script>
+  // Live priority prediction as user types
+  const HIGH_KW   = ["not working","down","crash","crashed","error","failed","failure","urgent","critical","cannot login","locked","blocked","virus","hack","breach","data loss","deleted","corrupted","broken","server","network down","no internet","system down","blue screen","bsod"];
+  const MEDIUM_KW = ["slow","lag","freeze","freezing","not syncing","not connecting","vpn","printer","wifi","password","reset","install","update","outlook","email","software","access denied","permission"];
+
+  function predictPriority(text) {
+    const t = text.toLowerCase();
+    for (const kw of HIGH_KW)   if (t.includes(kw)) return "High";
+    for (const kw of MEDIUM_KW) if (t.includes(kw)) return "Medium";
+    return text.trim().length > 3 ? "Low" : null;
+  }
+
+  function updatePriority(text) {
+    const preview = document.getElementById('priority-preview');
+    const badge   = document.getElementById('priority-badge');
+    const p = predictPriority(text);
+    if (!p) { preview.style.display = 'none'; return; }
+    const colors = { High: '#dc2626', Medium: '#f59e0b', Low: '#22c55e' };
+    badge.innerHTML = `<span style="background:${colors[p]};color:#fff;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px">${p} Priority</span>`;
+    preview.style.display = 'flex';
+  }
+
   function setLoading(on) {
     const btn = document.getElementById('submit-btn');
     btn.disabled = on;

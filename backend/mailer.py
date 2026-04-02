@@ -12,14 +12,12 @@ import config
 APP_URL = os.environ.get("APP_URL", "http://localhost:5000")
 
 
-def _send(to_email, subject, html_body, from_name=None, reply_to=None):
+def _send(to_email, subject, html_body, reply_to=None):
     try:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        # Show sender name as employee name if provided, else system name
-        display_name = from_name if from_name else "AI Ticket System"
-        msg["From"]   = f"{display_name} <{config.SMTP_USER}>"
-        msg["To"]     = to_email
+        msg["From"]    = f"AI Ticket System <{config.SMTP_USER}>"
+        msg["To"]      = to_email
         if reply_to:
             msg["Reply-To"] = reply_to
         msg.attach(MIMEText(html_body, "html"))
@@ -87,9 +85,7 @@ def notify_employee_raised(ticket):
       </div>
     </div>
     """
-    # From shows employee name; reply-to goes to employee email
     return _send(ticket["employee_email"], subject, html,
-                 from_name=f"{ticket['employee_name']} via IT Ticket System",
                  reply_to=ticket["employee_email"])
 
 
@@ -147,9 +143,7 @@ def notify_admin_new_ticket(ticket):
       </div>
     </div>
     """
-    # Reply-to goes to employee so admin can reply directly to them
     return _send(config.ADMIN_EMAIL, subject, html,
-                 from_name=f"{ticket['employee_name']} via IT Ticket System",
                  reply_to=ticket["employee_email"])
 
 
