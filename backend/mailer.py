@@ -12,12 +12,16 @@ import config
 APP_URL = os.environ.get("APP_URL", "http://localhost:5000")
 
 
-def _send(to_email, subject, html_body):
+def _send(to_email, subject, html_body, from_name=None, reply_to=None):
     try:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
-        msg["From"]    = config.SMTP_USER
-        msg["To"]      = to_email
+        # Show sender name as employee name if provided, else system name
+        display_name = from_name if from_name else "AI Ticket System"
+        msg["From"]   = f"{display_name} <{config.SMTP_USER}>"
+        msg["To"]     = to_email
+        if reply_to:
+            msg["Reply-To"] = reply_to
         msg.attach(MIMEText(html_body, "html"))
         with smtplib.SMTP(config.SMTP_HOST, config.SMTP_PORT) as server:
             server.ehlo()
@@ -34,7 +38,9 @@ def _send(to_email, subject, html_body):
 
 def notify_employee_raised(ticket):
     """Email employee confirming their ticket was received."""
-    subject = f"🎫 Ticket Raised Successfully — {ticket['id']}"
+    priority = ticket.get("priority", "Medium")
+    p_color  = {"High": "#dc2626", "Medium": "#f59e0b", "Low": "#22c55e"}.get(priority, "#f59e0b")
+    subject  = f"🎫 Ticket Raised Successfully — {ticket['id']}"
     html = f"""
     <div style="font-family:Segoe UI,sans-serif;max-width:600px;margin:auto;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1)">
       <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:28px 32px">
@@ -51,6 +57,10 @@ def notify_employee_raised(ticket):
             <td style="padding:12px 16px;font-weight:700;color:#5c6bc0;font-size:15px">{ticket['id']}</td>
           </tr>
           <tr style="border-bottom:1px solid #e8eaf6">
+            <td style="padding:12px 16px;color:#888;font-size:13px;font-weight:600">Priority</td>
+            <td style="padding:12px 16px"><span style="background:{p_color};color:#fff;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700">{priority}</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8eaf6">
             <td style="padding:12px 16px;color:#888;font-size:13px;font-weight:600">Status</td>
             <td style="padding:12px 16px"><span style="background:#fef3c7;color:#92400e;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700">🟡 OPEN</span></td>
           </tr>
@@ -59,20 +69,17 @@ def notify_employee_raised(ticket):
             <td style="padding:12px 16px;color:#333;font-size:13px">{ticket['created_at']}</td>
           </tr>
         </table>
-
         <div style="background:#fff8f0;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:20px">
           <p style="font-size:12px;color:#92400e;font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px">Your Issue</p>
           <p style="color:#333;margin:0;line-height:1.6;font-size:14px">{ticket['issue']}</p>
         </div>
-
         <div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:20px">
           <p style="font-size:12px;color:#166534;font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px">💡 AI Suggested Solution</p>
           <pre style="color:#1a2e1a;font-family:Segoe UI,sans-serif;white-space:pre-wrap;margin:0;line-height:1.7;font-size:14px">{ticket['solution']}</pre>
         </div>
-
         <p style="color:#666;font-size:13px;margin:0;line-height:1.6">
-          The IT admin has also been notified. You will receive another email once your ticket is resolved.<br/>
-          Please keep your ticket ID <strong>{ticket['id']}</strong> for reference.
+          The IT admin has been notified. You will receive another email once your ticket is resolved.<br/>
+          Keep your ticket ID <strong>{ticket['id']}</strong> for reference.
         </p>
       </div>
       <div style="padding:14px 32px;background:#f8f9ff;font-size:12px;color:#aaa;text-align:center">
@@ -80,14 +87,19 @@ def notify_employee_raised(ticket):
       </div>
     </div>
     """
-    return _send(ticket["employee_email"], subject, html)
+    # From shows employee name; reply-to goes to employee email
+    return _send(ticket["employee_email"], subject, html,
+                 from_name=f"{ticket['employee_name']} via IT Ticket System",
+                 reply_to=ticket["employee_email"])
 
 
 # ── 2. Admin notification: new ticket ────────────────────────────────────────
 
 def notify_admin_new_ticket(ticket):
     """Email admin with full ticket details + AI solution."""
-    subject = f"🎫 New Ticket {ticket['id']} from {ticket['employee_name']}"
+    priority = ticket.get("priority", "Medium")
+    p_color  = {"High": "#dc2626", "Medium": "#f59e0b", "Low": "#22c55e"}.get(priority, "#f59e0b")
+    subject  = f"🎫 [{priority} Priority] New Ticket {ticket['id']} from {ticket['employee_name']}"
     html = f"""
     <div style="font-family:Segoe UI,sans-serif;max-width:600px;margin:auto;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.1)">
       <div style="background:linear-gradient(135deg,#667eea,#764ba2);padding:28px 32px">
@@ -99,6 +111,10 @@ def notify_admin_new_ticket(ticket):
           <tr style="border-bottom:1px solid #e8eaf6">
             <td style="padding:12px 16px;color:#888;font-size:13px;font-weight:600;width:130px">Ticket ID</td>
             <td style="padding:12px 16px;font-weight:700;color:#5c6bc0;font-size:15px">{ticket['id']}</td>
+          </tr>
+          <tr style="border-bottom:1px solid #e8eaf6">
+            <td style="padding:12px 16px;color:#888;font-size:13px;font-weight:600">Priority</td>
+            <td style="padding:12px 16px"><span style="background:{p_color};color:#fff;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700">{priority}</span></td>
           </tr>
           <tr style="border-bottom:1px solid #e8eaf6">
             <td style="padding:12px 16px;color:#888;font-size:13px;font-weight:600">Employee</td>
@@ -113,28 +129,28 @@ def notify_admin_new_ticket(ticket):
             <td style="padding:12px 16px;color:#333;font-size:13px">{ticket['created_at']}</td>
           </tr>
         </table>
-
         <div style="background:#fff8f0;border-left:4px solid #f59e0b;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:20px">
-          <p style="font-size:12px;color:#92400e;font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px">Issue Reported by Employee</p>
+          <p style="font-size:12px;color:#92400e;font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px">Issue Reported</p>
           <p style="color:#333;margin:0;line-height:1.6;font-size:14px">{ticket['issue']}</p>
         </div>
-
         <div style="background:#f0fdf4;border-left:4px solid #22c55e;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:24px">
-          <p style="font-size:12px;color:#166534;font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px">💡 AI Suggested Solution (Auto-Generated)</p>
+          <p style="font-size:12px;color:#166534;font-weight:700;margin:0 0 6px;text-transform:uppercase;letter-spacing:0.5px">💡 AI Suggested Solution</p>
           <pre style="color:#1a2e1a;font-family:Segoe UI,sans-serif;white-space:pre-wrap;margin:0;line-height:1.7;font-size:14px">{ticket['solution']}</pre>
         </div>
-
         <a href="{APP_URL}/admin"
            style="display:inline-block;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:13px 28px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px">
           Open Admin Dashboard to Resolve →
         </a>
       </div>
       <div style="padding:14px 32px;background:#f8f9ff;font-size:12px;color:#aaa;text-align:center">
-        This is an automated message from AI Ticket System. Do not reply to this email.
+        This is an automated message from AI Ticket System.
       </div>
     </div>
     """
-    return _send(config.ADMIN_EMAIL, subject, html)
+    # Reply-to goes to employee so admin can reply directly to them
+    return _send(config.ADMIN_EMAIL, subject, html,
+                 from_name=f"{ticket['employee_name']} via IT Ticket System",
+                 reply_to=ticket["employee_email"])
 
 
 # ── 3. Employee notification: ticket resolved ─────────────────────────────────

@@ -22,7 +22,7 @@ def _save(data):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def create_ticket(employee_name, employee_email, issue, solution):
+def create_ticket(employee_name, employee_email, issue, solution, priority="Medium"):
     """Create a new ticket and return it."""
     db = _load()
     ticket_id = "TKT-" + str(uuid.uuid4())[:8].upper()
@@ -32,7 +32,8 @@ def create_ticket(employee_name, employee_email, issue, solution):
         "employee_email": employee_email,
         "issue": issue,
         "solution": solution,
-        "status": "open",          # open | resolved
+        "priority": priority,
+        "status": "open",
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "resolved_at": None,
     }

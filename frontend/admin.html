@@ -339,7 +339,10 @@
     if (!filtered.length) {
       list.innerHTML = '<div class="empty"><div class="ei">📭</div><p>No tickets found.</p></div>'; return;
     }
-    list.innerHTML = filtered.map(t => `
+    list.innerHTML = filtered.map(t => {
+      const p = t.priority || 'Medium';
+      const pColor = { High: '#dc2626', Medium: '#f59e0b', Low: '#22c55e' }[p] || '#f59e0b';
+      return `
       <div class="ticket-item ${t.status}" id="item-${t.id}">
         <div class="ticket-head" onclick="toggleBody('${t.id}')">
           <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
@@ -349,6 +352,7 @@
             <span class="t-date">· ${t.created_at}</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+            <span style="background:${pColor};color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px">${p}</span>
             ${t.status === 'open'
               ? '<span class="badge-open">🟡 OPEN</span>'
               : '<span class="badge-resolved">✅ RESOLVED</span>'}
@@ -366,7 +370,8 @@
                </button>`
             : `<div class="resolved-info">✅ Resolved on ${t.resolved_at} — Employee notified by email.</div>`}
         </div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   function toggleBody(id) {

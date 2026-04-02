@@ -88,6 +88,9 @@
       font-size: 11px; font-weight: 700; padding: 3px 12px;
       border-radius: 20px; letter-spacing: 0.5px;
     }
+    .priority-high   { background: #dc2626; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .priority-medium { background: #f59e0b; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+    .priority-low    { background: #22c55e; color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
     .result-card-body { padding: 20px; background: #fafbff; }
     .meta { font-size: 12px; color: #888; margin-bottom: 14px; }
     .slabel {
@@ -133,7 +136,6 @@
   <div class="header">
     <h1>🎫 AI Ticket System</h1>
     <p>Describe your IT issue and get an instant AI-powered solution</p>
-    <a href="/admin" class="admin-link">🔧 Admin Dashboard →</a>
   </div>
 
   <div class="card">
@@ -176,6 +178,10 @@
         </div>
         <div class="result-card-body">
           <div class="meta" id="res-meta"></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <span class="slabel" style="margin:0">Priority:</span>
+            <span id="res-priority"></span>
+          </div>
           <div class="slabel">Issue Reported</div>
           <div class="issue-box" id="res-issue"></div>
           <div class="slabel">💡 AI Suggested Solution</div>
@@ -238,6 +244,12 @@
       document.getElementById('res-meta').textContent     = `Raised by ${name} (${email})  ·  ${data.created_at}`;
       document.getElementById('res-issue').textContent    = data.issue;
       document.getElementById('res-solution').textContent = data.solution;
+
+      // Priority badge
+      const p = data.priority || 'Medium';
+      const pClass = { High: 'priority-high', Medium: 'priority-medium', Low: 'priority-low' }[p] || 'priority-medium';
+      document.getElementById('res-priority').innerHTML = `<span class="${pClass}">${p}</span>`;
+
       document.getElementById('result-card').style.display = 'block';
 
       // Clear form

@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
 
-from rag_service import build_index, query_rag
+from rag_service import build_index, query_rag, predict_priority
 from db import create_ticket, get_all_tickets, get_ticket, resolve_ticket
 from mailer import notify_employee_raised, notify_admin_new_ticket, notify_employee_resolved
 
@@ -38,11 +38,12 @@ def api_create_ticket():
     if not name or not email or not issue:
         return jsonify({"error": "Name, email and issue are required"}), 400
 
-    # AI reads the ticket and finds solution
+    # AI reads the ticket and finds solution + predicts priority
     solution = query_rag(issue)
+    priority = predict_priority(issue)
 
     # Save to DB
-    ticket = create_ticket(name, email, issue, solution)
+    ticket = create_ticket(name, email, issue, solution, priority)
 
     # Send email to employee: ticket confirmation
     emp_ok, emp_err = notify_employee_raised(ticket)
@@ -58,6 +59,7 @@ def api_create_ticket():
         "ticket_id":        ticket["id"],
         "issue":            ticket["issue"],
         "solution":         ticket["solution"],
+        "priority":         ticket["priority"],
         "status":           ticket["status"],
         "created_at":       ticket["created_at"],
         "employee_emailed": emp_ok,
